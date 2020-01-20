@@ -1,4 +1,3 @@
-//DSDS//
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,12 +5,27 @@
 <title></title>
 <style>
     *{margin:0; padding:0;}
-    .hide{ display: none}
+    .hide{ display: none;}
     .car{
         width: 50px; height: 70px; background: red;
         position: absolute;
-        left:50px; bottom:120px
-    }
+        bottom:120px;}
+        .lines{
+            width: 10px;
+            height: 100px;
+            background: white;
+            position: absolute;
+            margin-left: 195;
+        }
+
+        .gameArea{
+            width: 400px;
+            height: 100vh;
+            background: #2c3e50 ;
+            margin: auto;
+            position: relative;
+            overflow: hidden;
+        }
 
 
 </style>
@@ -36,10 +50,13 @@
     const gameArea = document.querySelector('.gameArea')
 console.log(gameArea);
 startScreen.addEventListener('click', start);
-let player = {};
+let player = {speed : 5};
+
 let keys = {ArrowUp : false,ArrowDown :false, ArrowLeft :false, ArowRight : false }
+
 document.addEventListener('keydown', keyDown);
 document.addEventListener('keyup', keyUp);
+
 function keyDown(e){
     e.preventDefault();
     keys[e.key]=true;
@@ -55,19 +72,42 @@ function keyUp(e){
 }
 function gameplay(){
     console.log("Hey i am clicked");
+    let car = document.querySelector('.car');
+    let road = gameArea.getBoundingClientRect|();
+    console.log(road);
+
     if (player.start){
+        if(keys.ArrowUp && player.y>road.top +70) {player.y -= player.speed}
+        if (keys.ArrowDown && player.y<road.buttom-70 ){player.y +=player.speed}
+        if(keys.ArrowLeft && player.x>0) {player.x -= player.speed}
+        if (keys.ArrowRight && player.x<(road.width-50)){player.x +=player.speed}
+        car.style.top = player.y + "px";
+        car.style.left = player.x + "px";
     window.requestAnimationFrame(gameplay);
     }
 }
 function start(){
     gameArea.classList.remove('hide');
     startScreen.classList.add('hide');
+
     player.start = true;
     window.requestAnimationFrame(gameplay);
+    for(x=0; x<5;x++)
+    {
+    let roadLine = document.createElement('div');
+    roadLine.setAttribute('class','lines');
+    roadLine.style.top = (x*150) + "px";
+    gameArea.appendChild(roadLine);
+    }
     let car = document.createElement('div');
     car.setAttribute('class','car');
-    car.innerText = "Hey i am ur car ";
+    //car.innerText = "Hey i am ur car ";
     gameArea.appendChild(car);
+    player.x = car.offsetLeft;
+    player.y = car.offsetTop;
+
+    console.log( "top position "+ car.offsetTop);
+    console.log( "left position "+ car.offsetLeft);
 
 }
 
